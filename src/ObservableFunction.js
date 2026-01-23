@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, markRaw } from 'vue'
 
 // function that exposes some vue reactive properties about it's current running state
 // use like observed_fn = new ObservableFunction(orig_fn)
@@ -33,7 +33,7 @@ class ObservableFunction extends Function {
 
     return new Proxy(fn, {
       apply: async (target, thisArg, argumentsList) => {
-        const controller = new AbortController()
+        const controller = markRaw(new AbortController())
         state.pending.push(controller)
         try {
           const ret = await boundFn(controller.signal, ...argumentsList)
